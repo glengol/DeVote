@@ -1,0 +1,21 @@
+<!doctype html>
+<html>
+<head>
+    <title>Results</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Voting Results</h1>
+    <ul>
+        {% for vote in votes %}
+            <li>{{ vote.name }} voted for {{ vote.choice }}</li>
+        {% endfor %}
+    </ul>
+    <h2>Summary</h2>
+    <ul>
+        {% for choice, count in choices.items() %}
+            <li>{{ choice }}: {{ count }} votes</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

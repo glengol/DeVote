@@ -1,0 +1,15 @@
+<!doctype html>
+<html>
+<head>
+    <title>Vote App</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Welcome to the Voting App</h1>
+    <form action="{{ url_for('vote') }}" method="post">
+        <label for="name">Enter your name:</label>
+        <input type="text" id="name" name="name" required>
+        <button type="submit">Submit</button>
+    </form>
+</body>
+</html>
