@@ -1,20 +1,65 @@
-<!doctype html>
-<html>
+<!-- vote.html -->
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <title>Vote</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voting Page</title>
+    <style>
+        body {
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding-top: 50px;
+        }
+        h1 {
+            color: #333;
+        }
+        form {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            display: inline-block;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            text-align: left;
+            width: 60%;
+            margin: 0 auto; /* Center align the form */
+        }
+        input[type="radio"], label {
+            display: block;
+            margin-bottom: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            margin-top: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
 </head>
 <body>
-    <h1>Hello, {{ name }}! Please cast your vote:</h1>
-    <form action="{{ url_for('submit_vote') }}" method="post">
+    <h1>Hello, {{ name }}</h1>
+    <h2>Vote</h2>
+    <form action="/submit_vote" method="post">
         <input type="hidden" name="name" value="{{ name }}">
-        <label for="choice">Choose an option:</label>
-        <select id="choice" name="choice" required>
-            <option value="Option 1">Option 1</option>
-            <option value="Option 2">Option 2</option>
-            <option value="Option 3">Option 3</option>
-        </select>
-        <button type="submit">Submit</button>
+        
+        {% for question, options in questions.items() %}
+        <h3>{{ question }}</h3>
+        {% for option in options %}
+        <input type="radio" id="{{ option }}" name="choice_{{ question }}" value="{{ option }}">
+        <label for="{{ option }}">{{ option }}</label>
+        {% endfor %}
+        <br><br>
+        {% endfor %}
+
+        <button type="submit">Submit Votes</button>
     </form>
 </body>
 </html>
