@@ -1,21 +1,83 @@
-<!doctype html>
-<html>
+<!-- results.html -->
+<!DOCTYPE html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Results</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        body {
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding-top: 50px;
+        }
+        h1 {
+            color: #333;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            margin-bottom: 10px;
+            background-color: #fff;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            text-align: left;
+            display: inline-block;
+            width: 40%;
+            vertical-align: top;
+            margin-right: 20px;
+        }
+        h2 {
+            margin-top: 50px;
+        }
+        .chart-img {
+            display: block;
+            margin: 20px auto;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            max-width: 80%;
+        }
+        .back-button {
+            margin-top: 20px;
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .back-button:hover {
+            background-color: #45a049;
+        }
+    </style>
 </head>
 <body>
-    <h1>Voting Results</h1>
+    <h1>Results</h1>
     <ul>
-        {% for vote in votes %}
-            <li>{{ vote.name }} voted for {{ vote.choice }}</li>
+        {% for question, result in results.items() %}
+        <li>
+            <h3>{{ question }}</h3>
+            <ul>
+                {% for option, count in result.items() %}
+                <li>{{ option }}: {{ count }}</li>
+                {% endfor %}
+            </ul>
+        </li>
         {% endfor %}
     </ul>
-    <h2>Summary</h2>
-    <ul>
-        {% for choice, count in choices.items() %}
-            <li>{{ choice }}: {{ count }} votes</li>
-        {% endfor %}
-    </ul>
+
+    <h2>Charts</h2>
+    {% for question, chart_filename in chart_paths.items() %}
+    <h3>{{ question }}</h3>
+    <img class="chart-img" src="{{ url_for('uploaded_file', filename=chart_filename) }}" alt="{{ question }} Chart">
+    {% endfor %}
+
+    <!-- Go back to index button -->
+    <a href="/" class="back-button">Go Back to Index</a>
 </body>
 </html>
