@@ -163,3 +163,5 @@ cython_debug/
 #.idea/
 /static/uploads/*
 !/static/uploads/.gitkeep
+/node_modules
+package-lock.json
