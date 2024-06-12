@@ -4,17 +4,20 @@ matplotlib.use('agg')  # Use a non-GUI backend to avoid threading issues with Fl
 
 import matplotlib.pyplot as plt
 import os
+from pymongo import MongoClient
 
 app = Flask(__name__)
+
+# MongoDB connection string
+client = MongoClient("mongodb://root:root@mongo:27017/vote_database?authSource=admin")
+db = client.vote_database  # Replace 'vote_database' with your database name
+votes_collection = db.votes  # Replace 'votes' with your collection name
 
 # Dictionary to hold questions and their options
 questions = {
     "AWS or GCP or AZURE": ["AWS", "GCP", "AZURE"],
     "YAML or JSON": ["YAML", "JSON"]
 }
-
-# Empty list to store votes
-votes = []
 
 UPLOAD_FOLDER = 'static/uploads'  # Define the folder to save chart images
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -36,7 +39,8 @@ def submit_vote():
     for question, options in questions.items():
         choice = request.form.get(f'choice_{question}')
         if choice:
-            votes.append({"name": name, "question": question, "choice": choice})
+            vote = {"name": name, "question": question, "choice": choice}
+            votes_collection.insert_one(vote)  # Insert vote into MongoDB
 
     return redirect(url_for('results'))
 
@@ -45,7 +49,7 @@ def results():
     # Calculate vote results
     results = {}
     for question, options in questions.items():
-        results[question] = {option: sum(1 for vote in votes if vote['question'] == question and vote['choice'] == option) for option in options}
+        results[question] = {option: votes_collection.count_documents({"question": question, "choice": option}) for option in options}
     
     # Generate and save pie charts
     chart_paths = {}
@@ -72,4 +76,6 @@ def uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 if __name__ == '__main__':
+    if not os.path.exists(app.config['UPLOAD_FOLDER']):
+        os.makedirs(app.config['UPLOAD_FOLDER'])
     app.run(debug=True)
