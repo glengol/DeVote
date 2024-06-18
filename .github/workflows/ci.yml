@@ -38,15 +38,45 @@ jobs:
     - name: Run Cypress tests
       run: npx cypress run
 
-    - name: Tag and push Docker image
+    - name: Bump version and push tag
+      id: tag 
+      if: ${{ github.ref == 'refs/heads/main' }}
+      uses: anothrNick/github-tag-action@1.67.0
       env:
-        IMAGE_NAME: glengold/devote
+        GITHUB_TOKEN: ${{ secrets.MANI_TOKEN }}
+        WITH_V: false
+        INITIAL_VERSION: 1.0.0
+
+    - name: Publish Docker Image to DockerHub
+      if: success()
       run: |
-        TAG=$(date +%Y%m%d%H%M%S)
-        docker build . -t $IMAGE_NAME:$TAG
-        docker push $IMAGE_NAME:$TAG
-        docker tag $IMAGE_NAME:$TAG $IMAGE_NAME:latest
-        docker push $IMAGE_NAME:latest
+        TAG=$(git describe --tags)
+        echo $DOCKER_ACCESS_TOKEN | docker login -u $DOCKER_USERNAME --password-stdin
+        docker build -t $IMAGE_NAME:$TAG .
+        docker tag $IMAGE_NAME:$TAG sbendarsky/$IMAGE_NAME:$TAG
+        docker push sbendarsky/$IMAGE_NAME:$TAG
 
     - name: Clean up
       run: docker-compose down
+
+    - name: Send success notification to Slack
+      if: success()
+      uses: slackapi/slack-github-action@v1.23.0
+      with:
+        payload: |
+          {
+            "text": "✅ CI Pipeline succeeded for commit ${{ github.sha }}.\nCypress tests passed and Docker image ${{ env.IMAGE_NAME }}:$TAG has been pushed successfully."
+          }
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+    - name: Send failure notification to Slack
+      if: failure()
+      uses: slackapi/slack-github-action@v1.23.0
+      with:
+        payload: |
+          {
+            "text": "❌ CI Pipeline failed for commit ${{ github.sha }}."
+          }
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }
