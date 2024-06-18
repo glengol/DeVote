@@ -40,7 +40,7 @@ jobs:
 
     - name: Tag and push Docker image
       env:
-        IMAGE_NAME: your_dockerhub_username/your_image_name
+        IMAGE_NAME: glengold/devote
       run: |
         TAG=$(date +%Y%m%d%H%M%S)
         docker build . -t $IMAGE_NAME:$TAG
