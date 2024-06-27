@@ -66,6 +66,7 @@ def submit_cloud_vote():
         "name": name,
         "comment": comment,
         "is_public": is_public,
+        "services": selected_services,
     }
     comment_collection.insert_one(comment) 
     return redirect(url_for('results'))
@@ -104,6 +105,8 @@ def results():
         plt.close(fig)
 
         chart_paths[cloud] = chart_filename
+    
+    
     
     # Fetch last 10 public comments
     public_comments = comment_collection.find({"is_public": True}).sort("_id", -1).limit(10)

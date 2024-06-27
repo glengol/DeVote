@@ -86,6 +86,8 @@
         {% for comment in comments %}
         <li>
             <strong>{{ comment.get('name', 'Anonymous') }}</strong> - {{ comment.get('comment', 'No comment') }}
+            <br>
+            <em>Services chosen: {{ ', '.join(comment.get('services', [])) }}</em>
         </li>
         {% endfor %}
     </ul>
