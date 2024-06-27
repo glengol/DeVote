@@ -1,0 +1,62 @@
+<!-- vote_cloud.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Choose Cloud Provider</title>
+    <style>
+        body {
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding-top: 50px;
+            font-size: 25px;
+        }
+        h1 {
+            color: #333;
+        }
+        form {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            display: inline-block;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            text-align: left;
+            width: 60%;
+            margin: 0 auto;
+        }
+        input[type="radio"], label {
+            margin-bottom: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            margin-top: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1>Hello, {{ name }}</h1>
+    <h2>Choose your preferred cloud provider</h2>
+    <form action="/vote_cloud" method="post">
+        <input type="hidden" name="name" value="{{ name }}">
+
+        {% for cloud in cloud_providers %}
+        <input type="radio" id="{{ cloud }}" name="choice_Which cloud provider do you prefer?" value="{{ cloud }}" required>
+        <label for="{{ cloud }}">{{ cloud }}</label>
+        <br>
+        {% endfor %}
+
+        <button type="submit">Next</button>
+    </form>
+</body>
+</html>

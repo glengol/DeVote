@@ -1,4 +1,3 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -38,9 +37,12 @@
         <label for="name">Enter your name:</label>
         <br>
         <input type="text" id="name" name="name" placeholder="Your name" required>
-        <br><br>
+        <br>
+        {% if already_voted %}
+        <span style="color:red">Username is already taken</span>
+        {% endif %}
+        <br>
         <button type="submit">Start Voting</button>
     </form>
-
 </body>
 </html>

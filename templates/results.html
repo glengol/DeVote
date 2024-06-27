@@ -1,4 +1,3 @@
-<!-- results.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -59,12 +58,12 @@
 <body>
     <h1>Results</h1>
     <ul>
-        {% for question, result in results.items() %}
+        {% for cloud, result in results.items() %}
         <li>
-            <h3>{{ question }}</h3>
+            <h3>{{ cloud }}</h3>
             <ul>
-                {% for option, count in result.items() %}
-                <li>{{ option }}: {{ count }}</li>
+                {% for service, count in result.items() %}
+                <li>{{ service }}: {{ count }}</li>
                 {% endfor %}
             </ul>
         </li>
@@ -72,10 +71,24 @@
     </ul>
 
     <h2>Charts</h2>
-    {% for question, chart_filename in chart_paths.items() %}
-    <h3>{{ question }}</h3>
-    <img class="chart-img" src="{{ url_for('uploaded_file', filename=chart_filename) }}" alt="{{ question }} Chart">
-    {% endfor %}
+    {% if chart_paths %}
+        {% for cloud, chart_filename in chart_paths.items() %}
+        <h3>{{ cloud }}</h3>
+        <img class="chart-img" src="{{ url_for('uploaded_file', filename=chart_filename) }}" alt="{{ cloud }} Chart">
+        {% endfor %}
+    {% else %}
+        <p>No charts available.</p>
+    {% endif %}
+
+    <!-- Comments -->
+    <h2>Recent Comments</h2>
+    <ul>
+        {% for comment in comments %}
+        <li>
+            <strong>{{ comment.get('name', 'Anonymous') }}</strong> - {{ comment.get('comment', 'No comment') }}
+        </li>
+        {% endfor %}
+    </ul>
 
     <!-- Go back to index button -->
     <a href="/" class="back-button">Go Back to Index</a>

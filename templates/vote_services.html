@@ -1,16 +1,17 @@
-<!-- vote.html -->
+<!-- vote_services.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Voting Page</title>
+    <title>{{ cloud }} Services Voting</title>
     <style>
         body {
             background-color: #f0f0f0;
             font-family: Arial, sans-serif;
             text-align: center;
             padding-top: 50px;
+            font-size: 25px;
         }
         h1 {
             color: #333;
@@ -23,11 +24,17 @@
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
             text-align: left;
             width: 60%;
-            margin: 0 auto; /* Center align the form */
+            margin: 0 auto;
         }
-        input[type="radio"], label {
-            display: block;
+        input[type="checkbox"], label {
             margin-bottom: 10px;
+        }
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
         }
         button {
             padding: 10px 20px;
@@ -45,21 +52,25 @@
     </style>
 </head>
 <body>
-    <h1>Hello, {{ name }}</h1>
-    <h2>Vote</h2>
-    <form action="/submit_vote" method="post">
+    <h1>Choose your favorite services from {{ cloud }}</h1>
+    <form action="/submit_cloud_vote" method="post">
         <input type="hidden" name="name" value="{{ name }}">
-        
-        {% for question, options in questions.items() %}
-        <h3>{{ question }}</h3>
-        {% for option in options %}
-        <input type="radio" id="{{ option }}" name="choice_{{ question }}" value="{{ option }}">
-        <label for="{{ option }}">{{ option }}</label>
-        {% endfor %}
-        <br><br>
+        <input type="hidden" name="cloud" value="{{ cloud }}">
+
+        {% for service in services %}
+        <input type="checkbox" id="{{ service }}" name="services" value="{{ service }}">
+        <label for="{{ service }}">{{ service }}</label>
+        <br>
         {% endfor %}
 
-        <button type="submit" id="submit_vote">Submit Votes</button>
+        <br><br>
+        <textarea name="comment" placeholder="Why did you choose these services?"></textarea>
+        <br>
+        <input type="checkbox" id="public" name="public" value="true">
+        <label for="public">Make my comment public</label>
+        <br><br>
+
+        <button type="submit">Submit Vote</button>
     </form>
 </body>
 </html>

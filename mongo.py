@@ -4,12 +4,12 @@ def initialize_database():
 
     mongo_uri = 'mongodb://root:root@mongo:27017/'
     client = MongoClient(mongo_uri)
-    db = client['vote_database']
+    db = client['votes_collectionnn']
 
   # Check if the collections already exist
-    if 'vote_database' not in db.list_collection_names():
+    if 'votes_collectionnn' not in db.list_collection_names():
         # Create a collection for votes
-        votes_collection = db['vote_database']
+        votes_collectionnn = db['votes_collectionnn']
 
     print("Database initialized successfully.")
 
