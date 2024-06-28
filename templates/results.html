@@ -5,92 +5,155 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Results</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
         body {
-            background-color: #f0f0f0;
-            font-family: Arial, sans-serif;
+            background-color: #f4f6f9;
+            font-family: 'Roboto', sans-serif;
             text-align: center;
-            padding-top: 50px;
+            padding: 20px;
         }
         h1 {
             color: #333;
+            font-size: 2.5em;
+            margin-bottom: 20px;
         }
-        ul {
-            list-style-type: none;
-            padding: 0;
+        .results-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
         }
-        li {
-            margin-bottom: 10px;
+        .result-item, .chart-wrapper {
             background-color: #fff;
-            padding: 10px;
+            padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            text-align: left;
-            display: inline-block;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-align: center;
             width: 40%;
-            vertical-align: top;
-            margin-right: 20px;
+            margin: 10px;
+            box-sizing: border-box;
+            transition: transform 0.2s;
+        }
+        .result-item:hover, .chart-wrapper:hover {
+            transform: translateY(-5px);
+        }
+        .result-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .result-table th, .result-table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+        .result-table th {
+            background-color: #f9f9f9;
         }
         h2 {
             margin-top: 50px;
+            font-size: 2em;
+            width: 100%;
+            color: #555;
         }
         .chart-img {
-            display: block;
-            margin: 20px auto;
             border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            max-width: 80%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            max-width: 100%;
+            height: auto;
         }
         .back-button {
-            margin-top: 20px;
+            margin-top: 30px;
             display: inline-block;
-            padding: 10px 20px;
+            padding: 12px 24px;
             background-color: #4CAF50;
             color: white;
             text-decoration: none;
             border-radius: 5px;
             cursor: pointer;
+            transition: background-color 0.2s;
         }
         .back-button:hover {
             background-color: #45a049;
+        }
+        .comments-container {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+        }
+        .comment-item {
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            width: 45%;
+            margin: 10px;
+            text-align: left;
+        }
+        .comment-item:nth-child(odd) {
+            background-color: #f9f9f9;
+        }
+        .comment-item h4 {
+            margin-bottom: 10px;
+            font-size: 1.2em;
+            color: #333;
+        }
+        .comment-item p {
+            color: #666;
         }
     </style>
 </head>
 <body>
     <h1>Results</h1>
-    <ul>
+    <div class="results-container">
         {% for cloud, result in results.items() %}
-        <li>
+        <div class="result-item">
             <h3>{{ cloud }}</h3>
-            <ul>
-                {% for service, count in result.items() %}
-                <li>{{ service }}: {{ count }}</li>
-                {% endfor %}
-            </ul>
-        </li>
+            <table class="result-table">
+                <thead>
+                    <tr>
+                        <th>Service</th>
+                        <th>Count</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for service, count in result.items() %}
+                    <tr>
+                        <td>{{ service }}</td>
+                        <td>{{ count }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
         {% endfor %}
-    </ul>
+    </div>
 
     <h2>Charts</h2>
-    {% if chart_paths %}
-        {% for cloud, chart_filename in chart_paths.items() %}
-        <h3>{{ cloud }}</h3>
-        <img class="chart-img" src="{{ url_for('uploaded_file', filename=chart_filename) }}" alt="{{ cloud }} Chart">
-        {% endfor %}
-    {% else %}
-        <p>No charts available.</p>
-    {% endif %}
+    <div class="results-container">
+        {% if chart_paths %}
+            {% for cloud, chart_filename in chart_paths.items() %}
+            <div class="chart-wrapper">
+                <h3>{{ cloud }}</h3>
+                <img class="chart-img" src="{{ url_for('uploaded_file', filename=chart_filename) }}" alt="{{ cloud }} Chart">
+            </div>
+            {% endfor %}
+        {% else %}
+            <p>No charts available.</p>
+        {% endif %}
+    </div>
 
     <!-- Comments -->
     <h2>Recent Comments</h2>
-    <ul>
+    <div class="comments-container">
         {% for comment in comments %}
-        <li>
-            <strong>{{ comment.get('name', 'Anonymous') }}</strong> - {{ comment.get('comment', 'No comment') }}
-            <br>
+        <div class="comment-item">
+            <h4>{{ comment.get('name', 'Anonymous') }}</h4>
+            <p>{{ comment.get('comment', 'No comment') }}</p>
             <em>Services chosen: {{ ', '.join(comment.get('services', [])) }}</em>
-        </li>
+        </div>
         {% endfor %}
-    </ul>
+    </div>
 
     <!-- Go back to index button -->
     <a href="/" class="back-button">Go Back to Index</a>
