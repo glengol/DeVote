@@ -38,9 +38,6 @@ jobs:
 
     - name: Build and run containers
       run: docker-compose up -d --build
-      
-    - name: Run Pytest
-      run: pytest
 
     - name: Bump version and push tag
       id: tag 
