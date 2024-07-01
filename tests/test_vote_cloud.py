@@ -3,13 +3,14 @@ import requests
 
 @pytest.fixture
 def url():
-    return "http://localhost:5000"  
+    return "http://localhost:5000"
 
-def test_vote_cloud_selection(url):
+@pytest.mark.parametrize("cloud_provider", ["AWS", "GCP", "Azure", "Alibaba Cloud", "Oracle Cloud"])
+def test_vote_cloud_selection(url, cloud_provider):
     data = {
-        'name': 'TestUser',
-        'choice_Which cloud provider do you prefer?': 'AWS',
+        'name': 'TestUser_' + cloud_provider.replace(" ", "_"),
+        'choice_Which cloud provider do you prefer?': cloud_provider,
     }
     response = requests.post(url + "/vote_cloud", data=data)
     assert response.status_code == 200
-    assert "Choose your favorite services from AWS" in response.text
+    assert f"Choose your favorite services from {cloud_provider}" in response.text
