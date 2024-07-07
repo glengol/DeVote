@@ -29,20 +29,33 @@ pipeline {
         stage('Login to DockerHub') {
             steps {
                 script {
-                    sh "echo ${DOCKER_HUB_TOKEN} | docker login -u ${DOCKER_HUB_USERNAME} --password-stdin"
+                    withCredentials([usernamePassword(credentialsId: 'docker_hub', passwordVariable: 'DOCKER_HUB_CREDENTIALS_PSW', usernameVariable: 'DOCKER_HUB_CREDENTIALS_USR')]) {
+                        // Use DOCKER_HUB_CREDENTIALS_USR and DOCKER_HUB_CREDENTIALS_PSW environment variables
+                        docker.withRegistry('https://registry-1.docker.io/v2/', 'docker_hub') {
+                            sh "echo \$DOCKER_HUB_CREDENTIALS_PSW | docker login -u \$DOCKER_HUB_CREDENTIALS_USR --password-stdin"
+                        }
+                    }
                 }
             }
         }
+
         stage('Build and Run Containers') {
             steps {
                 sh 'docker-compose up -d --build'
             }
         }
-        stage('Run Pytest') {
+
+        stage('Install Dependencies and Run Tests') {
             steps {
-                sh 'pytest'
+                script {
+                    // Install pytest in the python-test container
+                    sh 'kubectl exec -it jenkins-agent-pod -n jenkins -c python-test -- pip install -U pytest'
+                    // Run pytest in the python-test container
+                    sh 'kubectl exec -it jenkins-agent-pod -n jenkins -c python-test -- pytest'
+                }
             }
         }
+        
         stage('Bump Version and Push Tag') {
             when {
                 branch 'main'
