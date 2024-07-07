@@ -47,15 +47,14 @@ pipeline {
 
         stage('Install Dependencies and Run Tests') {
             steps {
-                script {
-                    // Install pytest in the python-test container
-                    sh 'kubectl exec -it jenkins-agent-pod -n jenkins -c python-test -- pip install -U pytest'
-                    // Run pytest in the python-test container
-                    sh 'kubectl exec -it jenkins-agent-pod -n jenkins -c python-test -- pytest'
+                container('python-test') {
+                    script {
+                        // Install pytest in the python-test container
+                        sh 'pytest'
+                    }
                 }
             }
-        }
-        
+        } 
         stage('Bump Version and Push Tag') {
             when {
                 branch 'main'
