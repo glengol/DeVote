@@ -11,7 +11,7 @@ spec:
         privileged: true
 
     - name: python-test
-      image: glengold/images:python+pytest
+      image: glengold/images:python_pytest
       command: ["sleep"]
       args: ["infinity"]
       imagePullPolicy: Always
