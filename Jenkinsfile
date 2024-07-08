@@ -55,17 +55,15 @@ pipeline {
                 }
             }
         } 
-        stage('Bump Version and Push Tag') {
-            when {
-                branch 'main'
-            }
+        stage('Push Image to Docker Hub') {
             steps {
                 script {
-                    def gitTag = sh(script: 'git describe --tags', returnStdout: true).trim()
-                    env.TAG = gitTag
-
+                    // Build the Docker image using the Dockerfile in the current directory
                     sh 'docker build -t ${IMAGE_NAME}:${TAG} .'
                     sh 'docker tag ${IMAGE_NAME}:${TAG} glengold/${IMAGE_NAME}:${TAG}'
+                    withCredentials([usernamePassword(credentialsId: 'docker_hub', passwordVariable: 'DOCKER_HUB_CREDENTIALS_PSW', usernameVariable: 'DOCKER_HUB_CREDENTIALS_USR')]) {
+                        sh "docker login -u \$DOCKER_HUB_CREDENTIALS_USR -p \$DOCKER_HUB_CREDENTIALS_PSW"
+                    }
                     sh 'docker push glengold/${IMAGE_NAME}:${TAG}'
                 }
             }
