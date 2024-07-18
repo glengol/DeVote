@@ -1,0 +1,24 @@
+replicaCount: 3
+
+image:
+  repository: glengold/devote
+  tag: latest
+  pullPolicy: IfNotPresent
+
+mongodb:
+  image: mongo:4.4.6
+  rootUsername: root
+  rootPassword: root
+  database: vote_database
+
+resources:
+  requests:
+    memory: "64Mi"
+    cpu: "250m"
+  limits:
+    memory: "128Mi"
+    cpu: "500m"
+
+persistentVolume:
+  accessModes: [ "ReadWriteOnce" ]
+  size: 1Gi
