@@ -1,13 +1,17 @@
+import os
 from flask import Flask, render_template, request, redirect, url_for, send_from_directory
 import matplotlib.pyplot as plt
 import numpy as np
-import os
 from pymongo import MongoClient
+import mongomock
 
 app = Flask(__name__)
 
-# MongoDB connection string
-client = MongoClient("mongodb://root:root@mongo:27017/votes_collection?authSource=admin")
+# Use mongomock for testing
+if os.environ.get('TESTING') == 'true':
+    client = mongomock.MongoClient()
+else:
+    client = MongoClient("mongodb://root:root@mongo:27017/votes_collection?authSource=admin")
 db = client.votes_collection 
 votes_collection = db.votes 
 comment_collection = db.comment
