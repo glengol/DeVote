@@ -127,29 +127,7 @@ pipeline {
                 }
             }
         }
-        stage('Create merge request') {
-            when {
-                not {
-                    branch 'main'
-                }
-            }
-            steps {
-                withCredentials([usernamePassword(credentialsId: env.GIT_CREDENTIALS_ID, usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                    script {
-                        def branchName = env.BRANCH_NAME
-                        def pullRequestTitle = "Merge ${branchName} into main"
-                        def pullRequestBody = "Automatically generated merge request for branch ${branchName} from Jenkins"
 
-                        sh """
-                            curl -X POST -u ${USERNAME}:${PASSWORD} \
-                            -d '{ "title": "${pullRequestTitle}", "body": "${pullRequestBody}", "head": "${branchName}", "base": "main" }' \
-                            ${GITHUB_API_URL}/repos/${GITHUB_REPO}/pulls
-                        """
-                    }
-                }
-            }
-        }
-    }
     post {
         success {
             slackSend(channel: "${SLACK_CHANNEL}", message: "Pipeline '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL}) succeeded.")
