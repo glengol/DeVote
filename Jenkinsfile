@@ -13,6 +13,9 @@ pipeline {
         TAG = 'latest'
         SLACK_CHANNEL = '#final-project'
         SLACK_CREDENTIAL_ID = 'slack-credentials'
+        GITHUB_API_URL = 'https://api.github.com'
+        GITHUB_REPO = 'glengol/DeVote'
+        GIT_CREDENTIALS_ID = 'git_hub' // Ensure this matches your Jenkins credentials ID
     }
     stages {
         stage('Checkout') {
@@ -90,7 +93,7 @@ pipeline {
                     slackSend(channel: "${SLACK_CHANNEL}", message: "Stage 'Install Dependencies and Run Tests' failed.")
                 }
             }
-        } 
+        }
         stage('Push Image to Docker Hub') {
             steps {
                 script {
@@ -121,6 +124,28 @@ pipeline {
                 }
                 failure {
                     slackSend(channel: "${SLACK_CHANNEL}", message: "Stage 'Clean up' failed.")
+                }
+            }
+        }
+        stage('Create merge request') {
+            when {
+                not {
+                    branch 'main'
+                }
+            }
+            steps {
+                withCredentials([usernamePassword(credentialsId: env.GIT_CREDENTIALS_ID, usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                    script {
+                        def branchName = env.BRANCH_NAME
+                        def pullRequestTitle = "Merge ${branchName} into main"
+                        def pullRequestBody = "Automatically generated merge request for branch ${branchName} from Jenkins"
+
+                        sh """
+                            curl -X POST -u ${USERNAME}:${PASSWORD} \
+                            -d '{ "title": "${pullRequestTitle}", "body": "${pullRequestBody}", "head": "${branchName}", "base": "main" }' \
+                            ${GITHUB_API_URL}/repos/${GITHUB_REPO}/pulls
+                        """
+                    }
                 }
             }
         }
