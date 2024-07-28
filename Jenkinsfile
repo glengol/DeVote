@@ -13,9 +13,6 @@ pipeline {
         TAG = 'latest'
         SLACK_CHANNEL = '#final-project'
         SLACK_CREDENTIAL_ID = 'slack-credentials'
-        GITHUB_API_URL = 'https://api.github.com'
-        GITHUB_REPO = 'glengol/DeVote'
-        GIT_CREDENTIALS_ID = 'git_hub' // Ensure this matches your Jenkins credentials ID
     }
     stages {
         stage('Checkout') {
@@ -93,7 +90,7 @@ pipeline {
                     slackSend(channel: "${SLACK_CHANNEL}", message: "Stage 'Install Dependencies and Run Tests' failed.")
                 }
             }
-        }
+        } 
         stage('Push Image to Docker Hub') {
             steps {
                 script {
@@ -127,7 +124,7 @@ pipeline {
                 }
             }
         }
-
+    }
     post {
         success {
             slackSend(channel: "${SLACK_CHANNEL}", message: "Pipeline '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL}) succeeded.")
