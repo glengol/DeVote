@@ -1,0 +1,36 @@
+1.to get up all the namespaces you run the file:
+        kubectl apply -f namespaces.yaml
+2.go to the deployments directory
+        cd cd .\k8s\deployments
+        kubectl apply -f app-deployment.yaml
+        kubectl apply -f mongo-deployment.yaml
+3.go to the services directory
+        cd .\k8s\services\
+        kubectl apply -f app-service.yaml
+        kubectl apply -f mongo-service.yaml
+4.Verify Deployments and Services
+        kubectl get deployments
+        kubectl get services
+
+
+
+
+to see jenkins in your local repo
+        helm fetch jenkins/jenkins --untar
+to see argocd in your local repo
+        helm fetch argo/argo-cd --untar
+
+
+port forward:
+kubectl port-forward -n monitoring svc/my-kube-prometheus-stack-prometheus 9090:9090
+
+kubectl port-forward -n monitoring svc/my-kube-prometheus-stack-grafana 3000:80
+
+kubectl port-forward -n argocd svc/argocd-server 8081:80
+
+kubectl port-forward  svc/web 5000:5000
+
+kubectl port-forward -n jenkins svc/jenkins 8080:8080
+
+ 
+                
